@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { supabase } from '../services/supabase'
 import jsPDF from 'jspdf'
 
 export default function ActivityPage() {
+
+  const navigate = useNavigate()
 
   const { id } = useParams()
 
@@ -182,14 +184,22 @@ export default function ActivityPage() {
 
     doc.line(120, 257, 180, 257)
 
-    // CREA BLOB PDF
+    // FOOTER
+    doc.setFontSize(9)
+
+    doc.text(
+      'Documento generato automaticamente dal Sistema Gestionale Aziendale.',
+      20,
+      285
+    )
+
+    // CREA PDF
     const pdfBlob = doc.output('blob')
 
-    // NOME FILE
     const fileName =
       `${Date.now()}_${employeeData.name}_${employeeData.surname}.pdf`
 
-    // UPLOAD SUPABASE
+    // UPLOAD STORAGE
     await supabase
       .storage
       .from('Contracts')
@@ -293,6 +303,29 @@ export default function ActivityPage() {
   return (
 
     <div className="min-h-screen bg-black text-white p-8">
+
+      {/* PULSANTE HOME FISSO */}
+
+      <button
+        onClick={() => navigate('/')}
+        className="
+          fixed
+          top-6
+          right-6
+          z-50
+          bg-yellow-500
+          text-black
+          px-6
+          py-3
+          rounded-2xl
+          font-bold
+          shadow-2xl
+          hover:scale-105
+          transition
+        "
+      >
+        HOME
+      </button>
 
       <h1 className="text-4xl text-yellow-500 font-bold mb-8">
         {activity?.name || 'Archivio Dipendenti'}
